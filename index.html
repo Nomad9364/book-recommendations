@@ -1,0 +1,114 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommended Economics & Finance Books</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Header -->
+  <header class="bg-blue-600 text-white py-6 text-center">
+    <h1 class="text-3xl font-bold">[Your Name]'s Book Recommendations</h1>
+    <p class="mt-2 text-lg">Economics & Finance Books I Recommend</p>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto py-8 px-4">
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Why These Books?</h2>
+      <p class="text-gray-600">
+        Welcome to my curated list of economics and finance books! These are the books I recommend to deepen your understanding of wealth, markets, and economic principles. Each book includes my affiliate link—click to purchase and support my work. I share new recommendations on <a href="https://x.com/[YourXHandle]" class="text-blue-600 hover:underline">X</a>, so follow me for updates!
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">Recommended Books</h2>
+      <div class="space-y-6">
+        <!-- Book 1 -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold text-gray-800">The Wealth of Nations</h3>
+          <p class="text-gray-600 mt-1">By Adam Smith</p>
+          <p class="text-gray-600 mt-2">
+            A foundational text in economics, exploring the principles of free markets and division of labor.
+          </p>
+          <a href="https://www.amazon.com/Wealth-Nations-Adam-Smith/dp/0140432086?tag=[YourAffiliateTag]" target="_blank" class="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Buy Now
+          </a>
+        </div>
+
+        <!-- Book 2 -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold text-gray-800">The Intelligent Investor</h3>
+          <p class="text-gray-600 mt-1">By Benjamin Graham</p>
+          <p class="text-gray-600 mt-2">
+            A timeless guide to value investing, offering strategies for building wealth with minimal risk.
+          </p>
+          <a href="https://www.amazon.com/Intelligent-Investor-Definitive-Investing-Essentials/dp/0060555661?tag=[YourAffiliateTag]" target="_blank" class="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Buy Now
+          </a>
+        </div>
+
+        <!-- Book 3 -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold text-gray-800">Capital in the Twenty-First Century</h3>
+          <p class="text-gray-600 mt-1">By Thomas Piketty</p>
+          <p class="text-gray-600 mt-2">
+            An in-depth analysis of wealth inequality and the dynamics of capital accumulation.
+          </p>
+          <a href="https://www.amazon.com/Capital-Twenty-First-Century-Thomas-Piketty/dp/067443000X?tag=[YourAffiliateTag]" target="_blank" class="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Buy Now
+          </a>
+        </div>
+
+        <!-- Add more books here -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-4 text-center">
+    <p>Follow me on <a href="https://x.com/[YourXHandle]" class="text-blue-400 hover:underline">X</a> for more recommendations!</p>
+    <p class="mt-2 text-sm">&copy; 2025 [Your Name]. All rights reserved.</p>
+  </footer>
+</body>
+</html>
